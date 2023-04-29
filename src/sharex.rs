@@ -1,3 +1,5 @@
+use std::env;
+
 use rand::{distributions::Alphanumeric, Rng};
 use actix_multipart::form::MultipartForm;
 use actix_web::{error, web, HttpResponse, Responder, Error, HttpRequest};
@@ -18,7 +20,7 @@ pub async fn save_file(req: HttpRequest, MultipartForm(form): MultipartForm<File
 
     form.file.file.persist(path).unwrap();
 
-    Ok(HttpResponse::Ok().body(format!("http://shockpast.ru/f/{}", name)))
+    Ok(HttpResponse::Ok().body(format!("http://{}/f/{}", env::var("AX_DOMAIN_NAME").to_owned().unwrap(), name)))
 }
 
 pub async fn shorten_url(req: HttpRequest, data: web::Form<URLJson>) -> Result<impl Responder, Error> {
@@ -39,7 +41,7 @@ pub async fn shorten_url(req: HttpRequest, data: web::Form<URLJson>) -> Result<i
     statement.bind((2, short.as_str())).unwrap();
     statement.next().unwrap();
 
-    Ok(HttpResponse::Ok().body(format!("http://shockpast.ru/s/{}", short)))
+    Ok(HttpResponse::Ok().body(format!("http://{}/s/{}", env::var("AX_DOMAIN_NAME").to_owned().unwrap(), short)))
 }
 
 pub async fn lookup_url(path: web::Path<String>) -> Result<impl Responder, Error> {
@@ -59,5 +61,5 @@ pub async fn lookup_url(path: web::Path<String>) -> Result<impl Responder, Error
 }
 
 fn check_token(req: HttpRequest) -> bool {
-    return req.headers().get("x-token").unwrap().to_str().unwrap() == "WmHtoQ%]6#)G&WFh:N*FZ@uZ";
+    return req.headers().get("x-token").unwrap().to_str().unwrap() == env::var_os("AX_SECRET_TOKEN").unwrap().to_str().unwrap();
 }

@@ -1,5 +1,6 @@
 mod sharex;
 
+use dotenv::dotenv;
 use actix_files as fs;
 use actix_multipart::form::{MultipartForm, tempfile::{TempFile, TempFileConfig}};
 use actix_web::{web, App, HttpServer, http::KeepAlive};
@@ -18,10 +19,13 @@ pub struct URLJson {
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
+    // there might be some better way to do that kind of job
     let connection = sqlite::open("actix.db").unwrap();
     connection.execute("
         CREATE TABLE IF NOT EXISTS shortened_links (full TEXT, short TEXT)
     ").unwrap();
+
+    dotenv().ok();
 
     HttpServer::new(|| {
         App::new()
