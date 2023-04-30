@@ -1,4 +1,5 @@
-mod sharex;
+pub mod sharex;
+pub mod util;
 
 use dotenv::dotenv;
 use actix_files as fs;

@@ -1,9 +1,10 @@
-use std::{env, process::Command};
+use std::env;
 
 use rand::{distributions::Alphanumeric, Rng};
 use actix_multipart::form::MultipartForm;
 use actix_web::{error, web, HttpResponse, Responder, Error, HttpRequest};
 
+use crate::util;
 use crate::{FileData, URLJson};
 
 pub async fn save_file(req: HttpRequest, MultipartForm(form): MultipartForm<FileData>) -> Result<impl Responder, Error> {
@@ -11,19 +12,15 @@ pub async fn save_file(req: HttpRequest, MultipartForm(form): MultipartForm<File
         return Err(error::ErrorForbidden("no"))
     }
 
-    let name = form.file.file_name.unwrap();
+    let name = util::secure_filename(form.file.file_name.unwrap());
     let path = format!("tmp/{}", name);
-
-    print!("{}", name);
 
     if form.file.size >= 50 * 1024 * 1024 {
         return Err(error::ErrorPayloadTooLarge(format!("File size >= 50mb")))
     }
 
-    print!("{}", path);
-
     form.file.file.persist(path).unwrap();
-    clean_exif(format!("tmp/{}", name).as_str());
+    util::clean_exif(format!("tmp/{}", name).as_str());
 
     Ok(HttpResponse::Ok().body(format!("http://{}/f/{}", env::var("AX_DOMAIN_NAME").to_owned().unwrap(), name)))
 }
@@ -67,12 +64,4 @@ pub async fn lookup_url(path: web::Path<String>) -> Result<impl Responder, Error
 
 fn check_token(req: HttpRequest) -> bool {
     return req.headers().get("x-token").unwrap().to_str().unwrap() == env::var_os("AX_SECRET_TOKEN").unwrap().to_str().unwrap();
-}
-
-fn clean_exif(name: &str) {
-    if ["jpg", "jpeg", "tif", "tiff", "wav", "png", "webp"].contains(&name) {
-        Command::new("exiftool")
-            .arg(format!("-All=tmp/{}", name));
-    }
-
 }
