@@ -6,13 +6,13 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-actix-web = "4"
+actix-web = "4.3.1"
 actix-files = "0.6.2"
 actix-multipart = "0.6.0"
 actix-web-lab = "0.19.1"
 sqlite = "0.30.4"
 serde = { version = "1.0.160", features = ["derive"] }
-serde_json = "1.0"
+serde_json = "1.0.96"
 dotenv = "0.15.0"
-rand = "0.5.0"
+rand = "0.8.5"
 regex = "1.8.1"
