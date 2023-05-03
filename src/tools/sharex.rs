@@ -1,11 +1,22 @@
 use std::env;
 
 use rand::{distributions::Alphanumeric, Rng};
-use actix_multipart::form::MultipartForm;
+use actix_multipart::form::{MultipartForm, tempfile::TempFile};
 use actix_web::{error, web, HttpResponse, Responder, Error, HttpRequest};
+use serde::Deserialize;
 
 use crate::util;
-use crate::{FileData, URLJson};
+
+#[derive(Debug, MultipartForm)]
+pub struct FileData {
+    #[multipart(rename = "file")]
+    file: TempFile
+}
+
+#[derive(Deserialize)]
+pub struct URLJson {
+    url: String
+}
 
 pub async fn save_file(req: HttpRequest, MultipartForm(form): MultipartForm<FileData>) -> Result<impl Responder, Error> {
     if !check_token(req) {
