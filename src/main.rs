@@ -4,7 +4,7 @@ pub mod util;
 
 use dotenv::dotenv;
 use actix_files::Files;
-use actix_multipart::form::{tempfile::TempFileConfig};
+use actix_multipart::form::tempfile::TempFileConfig;
 use actix_web::{web, App, HttpServer, http::KeepAlive};
 
 #[actix_web::main]
