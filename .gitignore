@@ -14,10 +14,10 @@ Cargo.lock
 *.pdb
 
 # Production files
-# "tmp" folder required for storing files in it, may be renamed by user manually
-# in "main.rs" file
+# "tmp" folder required for storing files in it, may be renamed by user manually in "main.rs" file
 tmp/*.*
 *.db
+.vscode
 
 # Secret files
 .env
