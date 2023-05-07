@@ -3,9 +3,9 @@ pub fn create() {
 
     conn.execute("
         CREATE TABLE IF NOT EXISTS shortened_links (
-            uid INTEGER PRIMARY KEY AUTOINCREMENT,
             full TEXT NOT NULL,
-            short TEXT NOT NULL
+            short TEXT NOT NULL,
+            clicks INTEGER
         )
     ").unwrap();
 }
