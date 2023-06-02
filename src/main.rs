@@ -2,10 +2,10 @@ pub mod database;
 pub mod tools;
 pub mod util;
 
-use dotenv::dotenv;
 use actix_files::Files;
 use actix_multipart::form::{tempfile::TempFileConfig, MultipartFormConfig};
-use actix_web::{web, App, HttpServer, http::KeepAlive};
+use actix_web::{http::KeepAlive, web, App, HttpServer};
+use dotenv::dotenv;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
@@ -15,7 +15,7 @@ async fn main() -> std::io::Result<()> {
     HttpServer::new(|| {
         App::new()
             .app_data(TempFileConfig::default().directory("tmp"))
-            .app_data(MultipartFormConfig::default().total_limit(100*1024*1024)) // 100mb
+            .app_data(MultipartFormConfig::default().total_limit(100 * 1024 * 1024)) // 100mb
             .service(web::resource("/upload").route(web::post().to(tools::sharex::save_file)))
             .service(web::resource("/shorten").route(web::post().to(tools::sharex::shorten_url)))
             .service(web::resource("/s/{id}").route(web::get().to(tools::sharex::lookup_url)))
